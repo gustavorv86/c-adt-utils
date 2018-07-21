@@ -28,6 +28,7 @@ Run examples
 ------------
 
 Run the **load_environment** script to load the **LD_LIBRARY_PATH** variable
+
 `. load_environment`
 
 Go to **dist** directory and run the examples
