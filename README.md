@@ -1,7 +1,7 @@
 C ADT Utils
 ===========
 
-Abstract Data Types library written in C language
+Abstract Data Types library written in C language.
 
 What you need
 -------------
@@ -17,7 +17,7 @@ Clone this repository.
 
 `git clone https://github.com/gustavorv86/c-adt-utils`
 
-Go to directory folder and run make command
+Go to repository folder and run make command.
 
 ```
 cd c-adt-utils
@@ -27,11 +27,11 @@ make
 Run examples
 ------------
 
-Run the **load_environment** script to load the **LD_LIBRARY_PATH** variable
+Run the **load_environment** script to load the **LD_LIBRARY_PATH**.
 
 `. load_environment`
 
-Go to **dist** directory and run the examples
+Go to **dist** directory and run the examples.
 
 ```
 cd dist
