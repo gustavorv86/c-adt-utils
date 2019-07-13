@@ -5,8 +5,8 @@
 #include "entity.h"
 
 typedef struct{
-    ENTITY* head;
-    ENTITY* tail;
+	ENTITY* head;
+	ENTITY* tail;
 }ENTITY_LIST;
 
 void entity_list_new(ENTITY_LIST*list);

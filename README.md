@@ -1,14 +1,20 @@
 C ADT Utils
 ===========
 
-Abstract Data Types library written in C language.
+Abstract Data Types libraries written in C language.
+- [x] Stack
+- [x] Queue
+- [x] Linked list
+- [x] Doubly linked list
+- [ ] Hash map
+- [ ] Linked map
 
 What you need
 -------------
 
 Install the next software.
 
-`sudo apt-get install git gcc gdb make`
+`sudo apt-get install git gcc gdb cmake make`
 
 Build
 -----
@@ -17,24 +23,25 @@ Clone this repository.
 
 `git clone https://github.com/gustavorv86/c-adt-utils`
 
-Go to repository folder and run make command.
+Go to repository folder, make build directory and run cmake.
 
 ```
 cd c-adt-utils
-make
+mkdir build
+cd build
+cmake ..
 ```
 
-Run examples
-------------
+Run test examples
+-----------------
 
-Run the **load_environment** script to load the **LD_LIBRARY_PATH**.
-
-`. load_environment`
-
-Go to **dist** directory and run the examples.
+Go to **build** directory and run the examples.
 
 ```
-cd dist
-./stack_test_main
+cd c-adt-utils/build
+./dist/bin/atd-stack-test
+./dist/bin/atd-queue-test
+./dist/bin/atd-linked-list-test
+./dist/bin/atd-doubly-linked-list-test
 ```
 
