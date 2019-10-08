@@ -2,101 +2,106 @@
 #include "hash_map.h"
 
 void hash_map_new(HASH_MAP_T * map){
-	for(unsigned int i = 0 ; i < HASH_MAP_SIZE ; i++){
-		LIST_NODE_T * list = &(map->slots[i]);
-		list_node_new(list);
-	}
+	hash_map_new_v2(map, DEFAULT_HASH_MAP_SIZE);
+}
+
+void hash_map_new_v2(HASH_MAP_T * map, unsigned int slot_size) {
+	map->slots = calloc(slot_size, sizeof(LINKED_MAP_T));
+	map->slot_size = slot_size;
 	map->size = 0;
 }
 
-unsigned int __hash_map_get_key_index(const char * key) {
+unsigned int __hash_map_get_key_index(const char * key, unsigned int slot_size) {
 	int sum = 0;
 	for(unsigned int i = 0; i < strlen(key); i++) {
 		sum += key[i];
 	}
-	return sum % HASH_MAP_SIZE;
+	return sum % slot_size;
 }
 
-LIST_NODE_T * __hash_map_get_index_list(HASH_MAP_T * map, unsigned int index) {
+LINKED_MAP_T * __hash_map_get_index_lmap(HASH_MAP_T * map, unsigned int index) {
 	return &(map->slots[index]);
 }
 
-LIST_NODE_T * __hash_map_get_list(HASH_MAP_T * map, const char * key) {
-	unsigned int index_key = __hash_map_get_key_index(key);
-	return __hash_map_get_index_list(map, index_key);
+LINKED_MAP_T * __hash_map_get_lmap(HASH_MAP_T * map, const char * key) {
+	unsigned int index_key = __hash_map_get_key_index(key, map->slot_size);
+	return __hash_map_get_index_lmap(map, index_key);
+}
+
+bool hash_map_is_empty(HASH_MAP_T map) {
+	return map.size == 0;
 }
 
 void hash_map_put(HASH_MAP_T * map, const char * key, const char * value){
-	LIST_NODE_T * list = __hash_map_get_list(map, key);
-	if(list_node_add(list, key, value)) {
+	LINKED_MAP_T * lmap = __hash_map_get_lmap(map, key);
+	if(linked_map_put(lmap, key, value)) {
 		map->size++;
 	}
 }
 
 const char * hash_map_get(HASH_MAP_T map, const char * key) {
-	LIST_NODE_T * list = __hash_map_get_list(&map, key);
-	return list_node_get_value(list, key);
+	LINKED_MAP_T * lmap = __hash_map_get_lmap(&map, key);
+	return linked_map_get(*lmap, key);
 }
 
 void hash_map_remove(HASH_MAP_T * map, const char * key) {
-	LIST_NODE_T * list = __hash_map_get_list(map, key);
-	if(list_node_remove(list, key)) {
+	LINKED_MAP_T * lmap = __hash_map_get_lmap(map, key);
+	if(linked_map_remove(lmap, key)) {
 		map->size--;
 	}
 }
 
 void hash_map_clear(HASH_MAP_T * map) {
-	for(unsigned int i = 0; i < HASH_MAP_SIZE; i++) {
-		LIST_NODE_T * list = __hash_map_get_index_list(map, i);
-		list_node_clear(list);
+	for(unsigned int i = 0; i < map->slot_size; i++) {
+		LINKED_MAP_T * lmap = __hash_map_get_index_lmap(map, i);
+		linked_map_clear(lmap);
 	}
+}
+
+void hash_map_destroy(HASH_MAP_T * map) {
+	hash_map_clear(map);
+	free(map->slots);
 }
 
 void hash_map_print(HASH_MAP_T map) {
-	for(unsigned int i = 0; i < HASH_MAP_SIZE; i++) {
-		LIST_NODE_T * list = __hash_map_get_index_list(&map, i);
+	for(unsigned int i = 0; i < map.slot_size; i++) {
+		LINKED_MAP_T * lmap = __hash_map_get_index_lmap(&map, i);
 
-		NODE_T * ptr = list->head;
+		NODE_T * ptr = lmap->head;
 		while(ptr != NULL) {
-			printf("(%u) [%s] = %s\n", i, ptr->key, ptr->value);
+			printf("(%u) %s: %s\n", i, ptr->key, ptr->value);
 			ptr = ptr->next;
 		}
 
 	}
 }
 
-HASH_MAP_KEYS_T hash_map_get_keys(HASH_MAP_T map) {
-	HASH_MAP_KEYS_T map_keys;
-	map_keys.size = map.size;
+KEYSET_T hash_map_keyset(HASH_MAP_T map) {
+	KEYSET_T keyset;
+	keyset.size = map.size;
 
-	// The last index position is NULL, more easy to implements 'hash_map_free_keys'
-	map_keys.keys = calloc((map_keys.size + 1), sizeof(char *));
+	// The last index position is NULL, more easy to implements 'hash_map_keyset_clear'
+	keyset.keys = calloc((keyset.size + 1), sizeof(char *));
 
-	unsigned int count_keys = 0;
-	for(unsigned int i = 0; i < HASH_MAP_SIZE; i++) {
-		LIST_NODE_T * list = __hash_map_get_index_list(&map, i);
+	unsigned int count = 0;
+	for(unsigned int i = 0; i < map.slot_size; i++) {
+		LINKED_MAP_T * lmap = __hash_map_get_index_lmap(&map, i);
 
-		NODE_T * ptr = list->head;
+		NODE_T * ptr = lmap->head;
 		while(ptr != NULL) {
 			const char * key = ptr->key;
 
-			unsigned int key_len = strlen(key);
-			map_keys.keys[count_keys] = calloc(key_len + 1, sizeof(char));
-			strncpy(map_keys.keys[count_keys], key, key_len);
-			count_keys++;
+			unsigned int key_size = strlen(key) + 1;
+			keyset.keys[count] = calloc(key_size, sizeof(char));
+			strncpy(keyset.keys[count++], key, key_size);
 
 			ptr = ptr->next;
 		}
 	}
 
-	return map_keys;
+	return keyset;
 }
 
-void hash_map_free_keys(HASH_MAP_KEYS_T * map_keys) {
-	unsigned int c = 0;
-	while(map_keys->keys[c] != NULL) {
-		free(map_keys->keys[c++]);
-	}
-	free(map_keys->keys);
-	map_keys->size = 0;
+void hash_map_keyset_destroy(KEYSET_T * keyset) {
+	linked_map_keyset_destroy(keyset);
 }

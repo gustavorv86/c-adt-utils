@@ -4,7 +4,6 @@
 #include <hash_map.h>
 
 int main() {
-
 	HASH_MAP_T map;
 
 	const char * key = NULL;
@@ -50,18 +49,24 @@ int main() {
 	printf("END TEST: hash_map_put_replace_value \n\n");
 
 	printf("TEST: hash_map_get_keys \n");
-	HASH_MAP_KEYS_T map_keys = hash_map_get_keys(map);
+	KEYSET_T map_keys = hash_map_keyset(map);
 	for(unsigned int i = 0; i < map_keys.size; i++) {
 		printf("%s ", map_keys.keys[i]);
 	}
 	printf("\n");
-	hash_map_free_keys(&map_keys);
+	hash_map_keyset_destroy(&map_keys);
 	printf("END TEST: hash_map_get_keys \n\n");
 
 	printf("TEST: hash_map_clear \n");
 	hash_map_clear(&map);
 	printf("END TEST: hash_map_clear \n\n");
 
+	printf("TEST: hash_map_put after clear \n");
+	hash_map_put(&map, "toro", "torus");
+	hash_map_print(map);
+	printf("END TEST: hash_map_put after clear \n\n");
+
+	hash_map_destroy(&map);
+
 	return (EXIT_SUCCESS);
 }
-

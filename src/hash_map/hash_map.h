@@ -3,31 +3,30 @@
 #define	HASHMAP_H
 
 #include <stdio.h>
-#include "list_node.h"
+#include "linked_map.h"
 
 /**
  * Major size, best performance but much memory.
  */
-#define HASH_MAP_SIZE  ((unsigned int)6)
+#define DEFAULT_HASH_MAP_SIZE  ((unsigned int)128)
 
 typedef struct {
-	LIST_NODE_T slots[HASH_MAP_SIZE];
+	LINKED_MAP_T * slots;
+	unsigned int slot_size;
 	unsigned int size;
 } HASH_MAP_T;
 
-typedef struct {
-	char ** keys;
-	unsigned int size;
-} HASH_MAP_KEYS_T;
-
 void hash_map_new(HASH_MAP_T * map);
+void hash_map_new_v2(HASH_MAP_T * map, unsigned int slot_size);
+bool hash_map_is_empty(HASH_MAP_T map);
 void hash_map_put(HASH_MAP_T * map, const char * key, const char * value);
 const char * hash_map_get(HASH_MAP_T map, const char * key);
 void hash_map_remove(HASH_MAP_T * map, const char * key);
 void hash_map_clear(HASH_MAP_T * map);
+void hash_map_destroy(HASH_MAP_T * map);
 void hash_map_print(HASH_MAP_T map);
 
-HASH_MAP_KEYS_T hash_map_get_keys(HASH_MAP_T map);
-void hash_map_free_keys(HASH_MAP_KEYS_T * keys);
+KEYSET_T hash_map_keyset(HASH_MAP_T map);
+void hash_map_keyset_destroy(KEYSET_T * keys);
 
 #endif
