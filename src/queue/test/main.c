@@ -8,6 +8,7 @@
 
 int main() {
 	QUEUE queue;
+	DATATYPE data;
 	
 	queue = queue_new();
 	queue_enqueue(&queue, 10);
@@ -15,12 +16,23 @@ int main() {
 	queue_enqueue(&queue, 30);
 	queue_enqueue(&queue, 40);
 	
-	queue_printf(queue);
+	queue_print(queue);
 	
-	printf("dequeue "DATATYPE_PRINTF"\n",  queue_dequeue(&queue));
-	printf("dequeue "DATATYPE_PRINTF"\n\n",  queue_dequeue(&queue));
+	if(queue_dequeue(&queue, &data)) {
+		printf("dequeue "DATATYPE_PRINTF"\n",  data);
+	} else {
+		printf("ERROR: queue is empty.\n");
+	}
 	
-	queue_printf(queue);
+	if(queue_dequeue(&queue, &data)) {
+		printf("dequeue "DATATYPE_PRINTF"\n",  data);
+	} else {
+		printf("ERROR: queue is empty.\n");
+	}
+	
+	queue_print(queue);
+	
+	queue_destroy(&queue);
 	
 	return EXIT_SUCCESS;
 }

@@ -34,12 +34,12 @@ typedef struct {
 // 'tail', y los extraeremos por el 'head'.
 
 // Funciones para operar con una cola
-QUEUE	queue_new();
-int	  queue_size(QUEUE my_queue);
-bool	 queue_empty(QUEUE my_queue);
-void	 queue_enqueue(QUEUE *my_queue, DATATYPE data);
-DATATYPE queue_dequeue(QUEUE *my_queue);
-void	 queue_clear(QUEUE *my_queue);
-void	 queue_printf(QUEUE my_queue);
+QUEUE queue_new(void);
+int   queue_size(QUEUE my_queue);
+bool  queue_empty(QUEUE my_queue);
+void  queue_enqueue(QUEUE *my_queue, DATATYPE data);
+bool  queue_dequeue(QUEUE *my_queue, DATATYPE * data);
+void  queue_destroy(QUEUE *my_queue);
+void  queue_print(QUEUE my_queue);
 
 #endif 

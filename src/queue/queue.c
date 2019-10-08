@@ -6,20 +6,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-QUEUE queue_new() {
-	// Devuelve una cola con los campos inicializados.
-	QUEUE my_queue;
-  
-	my_queue.head = NULL;
-	my_queue.tail = NULL;
-	my_queue.size = 0;
-	return my_queue;
-}
-
-void queue_init(QUEUE *my_queue) {
+void _queue_init(QUEUE *my_queue) {
 	my_queue->head = NULL;
 	my_queue->tail = NULL;
 	my_queue->size = 0;
+}
+
+QUEUE queue_new(void) {
+	// Devuelve una cola con los campos inicializados.
+	QUEUE my_queue;
+
+	_queue_init(&my_queue);
+	return my_queue;
 }
 
 int queue_size(QUEUE my_queue) {
@@ -56,22 +54,21 @@ void queue_enqueue(QUEUE *my_queue, DATATYPE data) {
 	(my_queue->size)++;
 }
 
-DATATYPE queue_dequeue(QUEUE *my_queue) {
+bool queue_dequeue(QUEUE *my_queue, DATATYPE * data) {
 	// Borra el primer elemento de la cola.
 	// La cola se pasa por referencia para poder modificar sus campos.
 	QUEUE_NODE *ptr_del_node;
-	DATATYPE retval;
 	
 	// si la cola es vacia no hacemos nada
 	if(queue_empty(*my_queue)) {
-		return DATATYPE_ERR;
+		return false;
 	}
 	// asignamos el valor de retorno
-	retval = my_queue->head->data;
+	*data = my_queue->head->data;
 	// si solo tenemos un elemento, lo borramos directamente
 	if(queue_size(*my_queue) == 1) {
 		free(my_queue->head);
-		queue_init(my_queue);
+		_queue_init(my_queue);
 	} else {
 		// asignamos el nodo que queremos borrar
 		ptr_del_node = my_queue->head;
@@ -82,29 +79,26 @@ DATATYPE queue_dequeue(QUEUE *my_queue) {
 		// decrementamos 'size'
 		(my_queue->size)--;
 	}
-	return retval;
+	return true;
 }
 
-void queue_clear(QUEUE *my_queue) {
+void queue_destroy(QUEUE *my_queue) {
 	// Borra por completo una cola.
-	QUEUE_NODE *ptr_aux_node, *ptr_del_node;
-	
-	ptr_aux_node = my_queue->head;
-	while(ptr_aux_node != NULL) {
+	while(my_queue->head != NULL) {
 		// asignamos el nodo que queremos borrar
-		ptr_del_node = ptr_aux_node;
+		QUEUE_NODE * ptr_del_node = my_queue->head;
 		// avanzamos el puntero
-		ptr_aux_node = ptr_aux_node->ptr_next;
+		my_queue->head = my_queue->head->ptr_next;
 		// borramos el nodo
 		free(ptr_del_node);
 	}
 	// inicializamos los campos de la estructura
-	queue_init(my_queue);
+	_queue_init(my_queue);
 }
 
-void queue_printf(QUEUE my_queue) {
+void queue_print(QUEUE my_queue) {
 	// Recorremos la cola con un puntero auxiliar;
-	QUEUE_NODE *ptr_aux_node;
+	QUEUE_NODE * ptr_aux_node;
 	
 	// mostrar el numero de elementos
 	printf("Size: %d \n", queue_size(my_queue));
