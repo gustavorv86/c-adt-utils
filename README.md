@@ -6,8 +6,8 @@ Abstract Data Types libraries written in C language.
 - [x] Queue
 - [x] Linked list
 - [x] Doubly linked list
+- [x] Linked map
 - [x] Hash map
-- [ ] Linked map
 
 What you need
 -------------
