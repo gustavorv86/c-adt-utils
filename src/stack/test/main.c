@@ -1,13 +1,10 @@
-/*
-	File: stack_main.c
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stack.h>
 
 int main() {
-	STACK my_stack;
+	STACK_T my_stack;
 	DATATYPE data;
 	
 	my_stack = stack_new();
@@ -15,21 +12,31 @@ int main() {
 	stack_push(&my_stack, 11);
 	stack_push(&my_stack, 12);
 	stack_push(&my_stack, 13);
+	stack_push(&my_stack, 14);
+	stack_push(&my_stack, 15);
 	
-	stack_printf(my_stack);
+	stack_print(my_stack);
 	
-	data = stack_pop(&my_stack);
-	printf(DATATYPE_PRINTF"\n", data);
+	if(stack_pop(&my_stack, &data)) {
+		printf(DATATYPE_PRINTF"\n", data);
+	} else {
+		printf("ERROR: stack is empty. \n");
+	}
 	
-	data = stack_pop(&my_stack);
-	printf(DATATYPE_PRINTF"\n\n", data);
+	if(stack_pop(&my_stack, &data)) {
+		printf(DATATYPE_PRINTF"\n\n", data);
+	} else {
+		printf("ERROR: stack is empty. \n\n");
+	}
 	
-	stack_printf(my_stack);
+	stack_print(my_stack);
 	
-	stack_pop(&my_stack);
-	stack_pop(&my_stack);
+	stack_pop(&my_stack, &data);
+	stack_pop(&my_stack, &data);
 	
-	stack_printf(my_stack);
+	stack_print(my_stack);
+	
+	stack_destroy(&my_stack);
 	
 	return EXIT_SUCCESS;
 }

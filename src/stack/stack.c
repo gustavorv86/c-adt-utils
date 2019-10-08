@@ -1,77 +1,80 @@
-/*
-	File: stack.c
-*/
 
 #include "stack.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-STACK stack_new() {
+STACK_T stack_new() {
 	// Devuelve una pila con los campos inicializados.
-	STACK my_stack;
+	STACK_T stack;
   
-	my_stack.head = NULL;
-	my_stack.size = 0;
-	return my_stack;
+	stack.head = NULL;
+	stack.size = 0;
+	return stack;
 }
 
-int stack_size(STACK my_stack) {
+int stack_size(STACK_T in_stack) {
 	// Devuelve el numero de elementos de la pila.
-	return my_stack.size;
+	return in_stack.size;
 }
 
-bool stack_empty(STACK my_stack) {
+bool stack_empty(STACK_T in_stack) {
 	// Devuelve TRUE si la pila esta vacia
-	return (my_stack.size == 0);
+	return (in_stack.size == 0);
 }
 
-void stack_push(STACK* ref_my_stack, DATATYPE data) {
+void stack_push(STACK_T * inout_stack, DATATYPE in_data) {
 	// Inserta un nuevo elemento en la pila.
 	// La pila se pasa por referencia para poder modificar sus campos.
-	STACK_NODE* ptr_stack_node;
 	
 	// reservamos memoria para el nuevo nodo
-	ptr_stack_node = malloc(sizeof(STACK_NODE));
+	STACK_NODE_T * ptr_stack_node = malloc(sizeof(STACK_NODE_T));
 	// asignamos el valor
-	ptr_stack_node->data = data;
+	ptr_stack_node->data = in_data;
 	// insertamos el nodo al principio, antes que 'head'
-	ptr_stack_node->ptr_next = ref_my_stack->head;
+	ptr_stack_node->ptr_next = inout_stack->head;
 	// cambiamos la direccion de 'head', que ahora es 'ptr_stack_node'
-	ref_my_stack->head = ptr_stack_node;
+	inout_stack->head = ptr_stack_node;
 	// incrementamos 'size'
-	(ref_my_stack->size)++;
+	(inout_stack->size)++;
 }
 
-DATATYPE stack_pop(STACK* ref_my_stack) {
+bool stack_pop(STACK_T * inout_stack, DATATYPE * out_data) {
 	// Borra el primer elemento de la pila.
 	// La pila se pasa por referencia para poder modificar sus campos.
-	STACK_NODE* ptr_del_node;
-	DATATYPE ret_value;
 	
-	if(stack_empty(*ref_my_stack)) {
-		return DATATYPE_ERR;
+	if(stack_empty(*inout_stack)) {
+		return false;
 	}
 	
 	// asignamos el nodo que queremos borrar
-	ptr_del_node = ref_my_stack->head;
-	ret_value = ptr_del_node->data;
+	STACK_NODE_T * ptr_del_node = inout_stack->head;
+	// obtenemos el dato a devolver
+	*out_data = ptr_del_node->data;
 	// avanzamos el nodo de la pila
-	ref_my_stack->head = ref_my_stack->head->ptr_next;
+	inout_stack->head = inout_stack->head->ptr_next;
 	// borramos el nodo
 	free(ptr_del_node);
 	// decrementamos 'size'
-	(ref_my_stack->size)--;
-	return ret_value;
+	(inout_stack->size)--;
+	return true;
 }
 
-void stack_printf(STACK my_stack) {
-	// Recorremos la pila con un puntero auxiliar;
-	STACK_NODE* ptr_aux_node;
+void stack_destroy(STACK_T * inout_stack) {
+	while(inout_stack->head != NULL) {
+		STACK_NODE_T * ptr_del_node = inout_stack->head;
+		inout_stack->head = inout_stack->head->ptr_next;
+		free(ptr_del_node);
+	}
+	inout_stack->head = NULL;
+	inout_stack->size = 0;
+}
+
+void stack_print(STACK_T in_stack) {
+	// recorremos la pila con un puntero auxiliar;
+	STACK_NODE_T * ptr_aux_node;
 	
 	// mostrar el numero de elementos
-	printf("Size: %d \n", stack_size(my_stack));
+	printf("Size: %d \n", stack_size(in_stack));
 	// recorremos la pila hasta que no sea NULL
-	ptr_aux_node = my_stack.head;
+	ptr_aux_node = in_stack.head;
 	while(ptr_aux_node != NULL) {
 		// pintar el elemento por pantalla
 		printf(" "DATATYPE_PRINTF" -> ",ptr_aux_node->data);
